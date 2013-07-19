@@ -126,7 +126,11 @@ class CatchAll extends ApiaxleController
     statsModel = @app.model "stats"
 
     @app.logger.debug "#{ @constructor.verb }ing '#{ options.url }'"
-    @app.ee.emit "req-start", @constructor.verb, options, api, api_key, keyrings
+
+    # let plugins know we've started
+    emitter_details = [ @constructor.verb, options, api, api_key, keyrings ]
+    @app.ee.emit "req-start", emitter_details...
+
     request[ @constructor.verb ] options, ( err, apiRes, body ) =>
       if err
         if err_func = @constructor.ENDPOINT_ERROR_MAP[ err.code ]
@@ -140,6 +144,9 @@ class CatchAll extends ApiaxleController
         @app.logger.warn "Error won't be statistically logged: '#{ err.message }'"
         error = new Error "'#{ options.url }' yielded '#{ err.message }'."
         return cb error, null
+
+      # tell plugins we've finished the request
+      @app.ee.emit "req-finish", emitter_details..., apiRes
 
       # response with the same code as the endpoint
       return statsModel.hit api, api_key, keyrings, "uncached", apiRes.statusCode, ( err, res ) ->
