@@ -8,8 +8,14 @@ debug = require( "debug" )( "aa:app" )
 { Js2Xml } = require "js2xml"
 { Application } = require "scarf"
 { NotFoundError } = require "./error"
+{ EventEmitter } = require "events"
 
 class exports.AxleApp extends Application
+  constructor: ( args... ) ->
+    @ee = new EventEmitter()
+
+    super args...
+
   configure: ( cb ) ->
     # error handler
     @use @express.router
