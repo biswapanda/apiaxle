@@ -81,8 +81,10 @@ class CatchAll extends ApiaxleController
     @_cacheTtl req, ( err, mustRevalidate, cacheTtl ) =>
       return outerCb err if err
 
+      args = [ req.subdomain, req.key.data.key, req.keyrings ]
+
       if cacheTtl is 0 or mustRevalidate
-        return @_httpRequest options, req.subdomain, req.key.data.key, req.keyrings, outerCb
+        return @_httpRequest options, args..., outerCb
 
       cache = @app.model "cache"
       key = @_cacheHash options.url
@@ -94,7 +96,7 @@ class CatchAll extends ApiaxleController
           statsModel = @app.model "stats"
 
           @app.logger.debug "Cache hit: #{options.url}"
-          return statsModel.hit req.subdomain, req.key.data.key, req.keyrings, "cached", status, ( err, res ) ->
+          return statsModel.hit args..., "cached", status, ( err, res ) ->
             fakeResponse =
               statusCode: status
               headers:
@@ -105,7 +107,7 @@ class CatchAll extends ApiaxleController
         @app.logger.debug "Cache miss: #{options.url}"
 
         # means we've a cache miss and so need to make a real request
-        @_httpRequest options, req.subdomain, req.key.data.key, req.keyrings, ( err, apiRes, body ) =>
+        @_httpRequest options, args..., ( err, apiRes, body ) =>
           return outerCb err if err
 
           # do I really need to check both?
