@@ -126,6 +126,7 @@ class CatchAll extends ApiaxleController
     statsModel = @app.model "stats"
 
     @app.logger.debug "#{ @constructor.verb }ing '#{ options.url }'"
+    @app.ee.emit "req-start", @constructor.verb, options, api, api_key, keyrings
     request[ @constructor.verb ] options, ( err, apiRes, body ) =>
       if err
         if err_func = @constructor.ENDPOINT_ERROR_MAP[ err.code ]
