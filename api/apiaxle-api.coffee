@@ -11,7 +11,7 @@ cpus = require("os").cpus()
 
 class exports.ApiaxleApi extends AxleApp
   @plugins =
-    controllers: "#{ __dirname }/app/controller/**/*_controller.{js,coffee}"
+    controllers: [ "#{ __dirname }/app/controller/**/*_controller.{js,coffee}" ]
 
   configure: ( cb ) ->
     @use express.methodOverride()

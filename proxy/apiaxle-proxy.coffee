@@ -11,7 +11,7 @@ cpus = require("os").cpus()
 
 class exports.ApiaxleProxy extends AxleApp
   @plugins =
-    controllers: "#{ __dirname }/app/controller/*_controller.{js,coffee}"
+    controllers: [ "#{ __dirname }/app/controller/*_controller.{js,coffee}" ]
 
 if not module.parent
   optimism = require( "optimist" ).options
