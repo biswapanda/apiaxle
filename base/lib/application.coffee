@@ -76,14 +76,21 @@ class exports.AxleApp extends Application
   loadAndInstansiatePlugins: ( cb ) ->
     @plugins = {}
 
-    # add our own models
-    @constructor.plugins.models = [ "#{ __dirname }/../app/model/redis/*.{js,coffee}" ]
-    @constructor.plugins.plugins = [ "/var/apiaxle/plugins/*.{js,coffee}" ]
+    # add our own models and plugins
+    @constructor.plugins.models = [
+      "#{ __dirname }/../app/model/redis/*.{js,coffee}"
+      "/var/apiaxle/models/*.{js,coffee}"
+      "#{ process.env.HOME }/apiaxle/models/*.{js,coffee}"
+    ]
+
+    @constructor.plugins.plugins = [
+      "/var/apiaxle/plugins/*.{js,coffee}"
+      "#{ process.env.HOME }/apiaxle/plugins/*.{js,coffee}"
+    ]
 
     all = []
     for category, paths of @constructor.plugins
       for path in paths
-        console.log( path )
         do( category, path ) =>
           all.push ( cb ) =>
             @collectPlugins path, ( err, items ) =>
