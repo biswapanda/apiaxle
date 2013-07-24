@@ -78,6 +78,7 @@ class exports.AxleApp extends Application
 
     # add our own models
     @constructor.plugins.models = "#{ __dirname }/../app/model/redis/*.{js,coffee}"
+    @constructor.plugins.plugins = "/var/apiaxle/plugins/*.{js,coffee}"
 
     all = []
     for category, path of @constructor.plugins
